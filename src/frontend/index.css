@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Bricolage Grotesque – Display ── */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/assets/fonts/BricolageGrotesque-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Outfit – Body ── */
+@font-face {
+  font-family: "Outfit";
+  src: url("/assets/fonts/Outfit-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+
+    /* Slate-dark backgrounds */
+    --background:     0.97 0.004 250;
+    --foreground:     0.18 0.03  265;
+
+    /* Card: pure white */
+    --card:           1 0 0;
+    --card-foreground: 0.18 0.03 265;
+
+    /* Popover */
+    --popover:        1 0 0;
+    --popover-foreground: 0.18 0.03 265;
+
+    /* Primary: electric teal */
+    --primary:        0.58 0.19 210;
+    --primary-foreground: 1 0 0;
+
+    /* Secondary: slate */
+    --secondary:      0.93 0.008 250;
+    --secondary-foreground: 0.25 0.04 265;
+
+    /* Muted */
+    --muted:          0.94 0.006 250;
+    --muted-foreground: 0.52 0.02 265;
+
+    /* Accent: warm amber */
+    --accent:         0.78 0.17 70;
+    --accent-foreground: 0.18 0.03 265;
+
+    /* Destructive */
+    --destructive:    0.55 0.22 25;
+    --destructive-foreground: 1 0 0;
+
+    /* Borders */
+    --border:         0.88 0.012 250;
+    --input:          0.88 0.012 250;
+    --ring:           0.58 0.19 210;
+
+    /* Charts */
+    --chart-1:        0.58 0.19 210;
+    --chart-2:        0.78 0.17 70;
+    --chart-3:        0.62 0.16 160;
+    --chart-4:        0.65 0.18 290;
+    --chart-5:        0.55 0.22 25;
+
+    /* Sidebar */
+    --sidebar:        0.97 0.004 250;
+    --sidebar-foreground: 0.18 0.03 265;
+    --sidebar-primary: 0.58 0.19 210;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.93 0.008 250;
+    --sidebar-accent-foreground: 0.25 0.04 265;
+    --sidebar-border: 0.88 0.012 250;
+    --sidebar-ring:   0.58 0.19 210;
+
+    /* App-specific tokens */
+    --surface:        0.96 0.006 250;
+    --surface-raised: 1 0 0;
+    --teal:           0.58 0.19 210;
+    --teal-light:     0.92 0.06 210;
+    --amber:          0.78 0.17 70;
+    --amber-light:    0.96 0.07 70;
+    --navy:           0.22 0.04 265;
+    --success:        0.62 0.16 160;
+    --success-light:  0.94 0.06 160;
+  }
+
+  .dark {
+    --background:     0.15 0.025 265;
+    --foreground:     0.95 0.008 250;
+    --card:           0.21 0.03 265;
+    --card-foreground: 0.95 0.008 250;
+    --popover:        0.21 0.03 265;
+    --popover-foreground: 0.95 0.008 250;
+    --primary:        0.65 0.19 210;
+    --primary-foreground: 0.1 0.02 265;
+    --secondary:      0.25 0.03 265;
+    --secondary-foreground: 0.9 0.008 250;
+    --muted:          0.26 0.03 265;
+    --muted-foreground: 0.6 0.02 265;
+    --accent:         0.78 0.17 70;
+    --accent-foreground: 0.1 0.02 265;
+    --destructive:    0.65 0.22 25;
+    --destructive-foreground: 0.95 0.008 250;
+    --border:         0.28 0.03 265;
+    --input:          0.28 0.03 265;
+    --ring:           0.65 0.19 210;
+    --sidebar:        0.18 0.03 265;
+    --sidebar-foreground: 0.95 0.008 250;
+    --sidebar-primary: 0.65 0.19 210;
+    --sidebar-primary-foreground: 0.1 0.02 265;
+    --sidebar-accent: 0.25 0.03 265;
+    --sidebar-accent-foreground: 0.9 0.008 250;
+    --sidebar-border: 0.28 0.03 265;
+    --sidebar-ring:   0.65 0.19 210;
+    --surface:        0.19 0.03 265;
+    --surface-raised: 0.22 0.03 265;
+    --teal:           0.65 0.19 210;
+    --teal-light:     0.25 0.08 210;
+    --amber:          0.78 0.17 70;
+    --amber-light:    0.28 0.08 70;
+    --success:        0.65 0.16 160;
+    --success-light:  0.22 0.07 160;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: "Bricolage Grotesque", sans-serif; }
+  .font-body    { font-family: "Outfit", sans-serif; }
+
+  .bg-surface       { background-color: oklch(var(--surface)); }
+  .bg-surface-raised { background-color: oklch(var(--surface-raised)); }
+  .bg-teal          { background-color: oklch(var(--teal)); }
+  .bg-teal-light    { background-color: oklch(var(--teal-light)); }
+  .bg-amber-light   { background-color: oklch(var(--amber-light)); }
+  .bg-success-light { background-color: oklch(var(--success-light)); }
+  .text-teal        { color: oklch(var(--teal)); }
+  .text-amber       { color: oklch(var(--amber)); }
+  .text-navy        { color: oklch(var(--navy)); }
+  .text-success     { color: oklch(var(--success)); }
+  .border-teal      { border-color: oklch(var(--teal)); }
+  .ring-teal        { --tw-ring-color: oklch(var(--teal)); }
+
+  .compare-column-highlight {
+    background: oklch(var(--teal) / 0.06);
+    border-left: 2px solid oklch(var(--teal) / 0.3);
+    border-right: 2px solid oklch(var(--teal) / 0.3);
+  }
+
+  .card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px oklch(var(--teal) / 0.12), 0 4px 12px oklch(0 0 0 / 0.08);
+  }
+
+  .gradient-mesh {
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 10%, oklch(var(--teal) / 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 10% 90%, oklch(var(--amber) / 0.05) 0%, transparent 60%),
+      oklch(var(--background));
+  }
+
+  .feature-check {
+    color: oklch(var(--success));
+  }
+  .feature-x {
+    color: oklch(var(--muted-foreground));
+  }
+}
