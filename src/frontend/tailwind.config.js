@@ -16,8 +16,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Bricolage Grotesque", "sans-serif"],
-        body: ["Outfit", "sans-serif"],
+        display: ["Cabinet Grotesk", "sans-serif"],
+        body: ["Satoshi", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
       },
       colors: {
         border: "oklch(var(--border))",

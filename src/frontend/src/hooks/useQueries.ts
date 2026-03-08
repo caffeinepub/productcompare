@@ -1,40 +1,52 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Feature, Product, Variant } from "../backend.d";
+import type { CarCategory, CarModel, Feature, Trim } from "../backend.d";
 import { useActor } from "./useActor";
 
-export function useAllProducts() {
+export function useAllCarModels() {
   const { actor, isFetching } = useActor();
-  return useQuery<Product[]>({
-    queryKey: ["products"],
+  return useQuery<CarModel[]>({
+    queryKey: ["carModels"],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getAllProducts();
+      return actor.getAllCarModels();
     },
     enabled: !!actor && !isFetching,
   });
 }
 
-export function useProduct(id: bigint | null) {
+export function useCarModel(id: bigint | null) {
   const { actor, isFetching } = useActor();
-  return useQuery<Product | null>({
-    queryKey: ["product", id?.toString()],
+  return useQuery<CarModel | null>({
+    queryKey: ["carModel", id?.toString()],
     queryFn: async () => {
       if (!actor || id === null) return null;
-      return actor.getProduct(id);
+      return actor.getCarModel(id);
     },
     enabled: !!actor && !isFetching && id !== null,
   });
 }
 
-export function useVariantsByProduct(productId: bigint | null) {
+export function useTrimsByCarModel(carModelId: bigint | null) {
   const { actor, isFetching } = useActor();
-  return useQuery<Variant[]>({
-    queryKey: ["variants", productId?.toString()],
+  return useQuery<Trim[]>({
+    queryKey: ["trims", carModelId?.toString()],
     queryFn: async () => {
-      if (!actor || productId === null) return [];
-      return actor.getVariantsByProductId(productId);
+      if (!actor || carModelId === null) return [];
+      return actor.getTrimsByCarModelId(carModelId);
     },
-    enabled: !!actor && !isFetching && productId !== null,
+    enabled: !!actor && !isFetching && carModelId !== null,
+  });
+}
+
+export function useTrimsByIds(trimIds: bigint[]) {
+  const { actor, isFetching } = useActor();
+  return useQuery<Trim[]>({
+    queryKey: ["trimsByIds", trimIds.map((id) => id.toString()).join(",")],
+    queryFn: async () => {
+      if (!actor || trimIds.length === 0) return [];
+      return actor.getTrimsByIds(trimIds);
+    },
+    enabled: !!actor && !isFetching && trimIds.length > 0,
   });
 }
 
@@ -47,93 +59,240 @@ export function useSeedData() {
       await actor.seedData();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["carModels"] });
     },
   });
 }
 
-export function useAddProduct() {
+export function useIsSeeded() {
+  const { actor, isFetching } = useActor();
+  return useQuery<boolean>({
+    queryKey: ["isSeeded"],
+    queryFn: async () => {
+      if (!actor) return true;
+      return actor.isSeeded();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useIsCallerAdmin() {
+  const { actor, isFetching } = useActor();
+  return useQuery<boolean>({
+    queryKey: ["isCallerAdmin"],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isCallerAdmin();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useAllTrims() {
+  const { actor, isFetching } = useActor();
+  const { data: models } = useAllCarModels();
+  return useQuery<(Trim & { modelName: string })[]>({
+    queryKey: [
+      "allTrims",
+      (models ?? []).map((m) => m.id.toString()).join(","),
+    ],
+    queryFn: async () => {
+      if (!actor || !models || models.length === 0) return [];
+      const trimGroups = await Promise.all(
+        models.map((m) => actor.getTrimsByCarModelId(m.id)),
+      );
+      return trimGroups.flatMap((trims, idx) =>
+        trims.map((t) => ({ ...t, modelName: models[idx].name })),
+      );
+    },
+    enabled: !!actor && !isFetching && !!models && models.length > 0,
+  });
+}
+
+export function useAddCarModel() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      name,
-      description,
-      category,
-      imageUrl,
-    }: {
+    mutationFn: async (args: {
       name: string;
       description: string;
-      category: string;
+      category: CarCategory;
+      tagline: string;
       imageUrl: string;
     }) => {
       if (!actor) throw new Error("No actor");
-      return actor.addProduct(name, description, category, imageUrl);
+      return actor.addCarModel(
+        args.name,
+        args.description,
+        args.category,
+        args.tagline,
+        args.imageUrl,
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["carModels"] });
+      queryClient.invalidateQueries({ queryKey: ["allTrims"] });
     },
   });
 }
 
-export function useDeleteProduct() {
+export function useUpdateCarModel() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (args: {
+      id: bigint;
+      name: string;
+      description: string;
+      category: CarCategory;
+      tagline: string;
+      imageUrl: string;
+    }) => {
+      if (!actor) throw new Error("No actor");
+      return actor.updateCarModel(
+        args.id,
+        args.name,
+        args.description,
+        args.category,
+        args.tagline,
+        args.imageUrl,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["carModels"] });
+      queryClient.invalidateQueries({ queryKey: ["allTrims"] });
+    },
+  });
+}
+
+export function useDeleteCarModel() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: bigint) => {
       if (!actor) throw new Error("No actor");
-      return actor.deleteProduct(id);
+      return actor.deleteCarModel(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["carModels"] });
+      queryClient.invalidateQueries({ queryKey: ["allTrims"] });
     },
   });
 }
 
-export function useAddVariant() {
+export function useAddTrim() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      productId,
-      name,
-      price,
-      features,
-    }: {
-      productId: bigint;
+    mutationFn: async (args: {
+      carModelId: bigint;
       name: string;
       price: number;
+      monthlyEMI: number;
       features: Feature[];
     }) => {
       if (!actor) throw new Error("No actor");
-      return actor.addVariant(productId, name, price, features);
+      return actor.addTrim(
+        args.carModelId,
+        args.name,
+        args.price,
+        args.monthlyEMI,
+        args.features,
+      );
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: (_data, vars) => {
       queryClient.invalidateQueries({
-        queryKey: ["variants", variables.productId.toString()],
+        queryKey: ["trims", vars.carModelId.toString()],
       });
+      queryClient.invalidateQueries({ queryKey: ["allTrims"] });
     },
   });
 }
 
-export function useDeleteVariant() {
+export function useUpdateTrim() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      id,
-      productId: _productId,
-    }: {
+    mutationFn: async (args: {
       id: bigint;
-      productId: bigint;
+      carModelId: bigint;
+      name: string;
+      price: number;
+      monthlyEMI: number;
+      features: Feature[];
     }) => {
       if (!actor) throw new Error("No actor");
-      return actor.deleteVariant(id);
+      return actor.updateTrim(
+        args.id,
+        args.carModelId,
+        args.name,
+        args.price,
+        args.monthlyEMI,
+        args.features,
+      );
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: (_data, vars) => {
       queryClient.invalidateQueries({
-        queryKey: ["variants", variables.productId.toString()],
+        queryKey: ["trims", vars.carModelId.toString()],
       });
+      queryClient.invalidateQueries({ queryKey: ["allTrims"] });
     },
+  });
+}
+
+export function useDeleteTrim() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (args: { id: bigint; carModelId: bigint }) => {
+      if (!actor) throw new Error("No actor");
+      return actor.deleteTrim(args.id);
+    },
+    onSuccess: (_data, vars) => {
+      queryClient.invalidateQueries({
+        queryKey: ["trims", vars.carModelId.toString()],
+      });
+      queryClient.invalidateQueries({ queryKey: ["allTrims"] });
+    },
+  });
+}
+
+export function useClaimAdminIfNoneExists() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error("No actor");
+      return actor.claimAdminIfNoneExists();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isCallerAdmin"] });
+    },
+  });
+}
+
+export function useResetAdmin() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error("Not connected");
+      return actor.resetAdmin();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isCallerAdmin"] });
+    },
+  });
+}
+
+export function useGetCallerPrincipal() {
+  const { actor, isFetching } = useActor();
+  return useQuery<string>({
+    queryKey: ["callerPrincipal"],
+    queryFn: async () => {
+      if (!actor) return "";
+      return actor.getCallerPrincipal();
+    },
+    enabled: !!actor && !isFetching,
   });
 }

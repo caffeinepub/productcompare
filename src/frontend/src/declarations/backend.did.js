@@ -8,52 +8,85 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const Product = IDL.Record({
+export const CarCategory = IDL.Variant({
+  'mpv' : IDL.Null,
+  'suv' : IDL.Null,
+  'coupe' : IDL.Null,
+  'sedan' : IDL.Null,
+  'hatchback' : IDL.Null,
+});
+export const CarModel = IDL.Record({
   'id' : IDL.Nat,
+  'tagline' : IDL.Text,
   'name' : IDL.Text,
   'description' : IDL.Text,
   'imageUrl' : IDL.Text,
-  'category' : IDL.Text,
+  'category' : CarCategory,
 });
 export const Feature = IDL.Record({
   'value' : IDL.Text,
   'name' : IDL.Text,
   'included' : IDL.Bool,
 });
-export const Variant = IDL.Record({
+export const Trim = IDL.Record({
   'id' : IDL.Nat,
   'features' : IDL.Vec(Feature),
   'name' : IDL.Text,
-  'productId' : IDL.Nat,
+  'carModelId' : IDL.Nat,
   'price' : IDL.Float64,
+  'monthlyEMI' : IDL.Float64,
 });
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
+});
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 
 export const idlService = IDL.Service({
-  'addProduct' : IDL.Func(
-      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
-      [Product],
+  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addCarModel' : IDL.Func(
+      [IDL.Text, IDL.Text, CarCategory, IDL.Text, IDL.Text],
+      [CarModel],
       [],
     ),
-  'addVariant' : IDL.Func(
-      [IDL.Nat, IDL.Text, IDL.Float64, IDL.Vec(Feature)],
-      [Variant],
+  'addTrim' : IDL.Func(
+      [IDL.Nat, IDL.Text, IDL.Float64, IDL.Float64, IDL.Vec(Feature)],
+      [Trim],
       [],
     ),
-  'deleteProduct' : IDL.Func([IDL.Nat], [], []),
-  'deleteVariant' : IDL.Func([IDL.Nat], [], []),
-  'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
-  'getProduct' : IDL.Func([IDL.Nat], [Product], ['query']),
-  'getVariant' : IDL.Func([IDL.Nat], [Variant], ['query']),
-  'getVariantsByProductId' : IDL.Func([IDL.Nat], [IDL.Vec(Variant)], ['query']),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'claimAdminIfNoneExists' : IDL.Func([], [IDL.Bool], []),
+  'deleteCarModel' : IDL.Func([IDL.Nat], [], []),
+  'deleteTrim' : IDL.Func([IDL.Nat], [], []),
+  'getAllCarModels' : IDL.Func([], [IDL.Vec(CarModel)], ['query']),
+  'getCallerPrincipal' : IDL.Func([], [IDL.Text], ['query']),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getCarModel' : IDL.Func([IDL.Nat], [CarModel], ['query']),
+  'getNextCarModelId' : IDL.Func([], [IDL.Nat], ['query']),
+  'getNextTrimId' : IDL.Func([], [IDL.Nat], ['query']),
+  'getTrim' : IDL.Func([IDL.Nat], [Trim], ['query']),
+  'getTrimsByCarModelId' : IDL.Func([IDL.Nat], [IDL.Vec(Trim)], ['query']),
+  'getTrimsByIds' : IDL.Func([IDL.Vec(IDL.Nat)], [IDL.Vec(Trim)], ['query']),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(UserProfile)],
+      ['query'],
+    ),
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'isSeeded' : IDL.Func([], [IDL.Bool], ['query']),
+  'resetAdmin' : IDL.Func([], [], []),
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'seedData' : IDL.Func([], [], []),
-  'updateProduct' : IDL.Func(
-      [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
-      [Product],
+  'updateCarModel' : IDL.Func(
+      [IDL.Nat, IDL.Text, IDL.Text, CarCategory, IDL.Text, IDL.Text],
+      [CarModel],
       [],
     ),
-  'updateVariant' : IDL.Func(
-      [IDL.Nat, IDL.Nat, IDL.Text, IDL.Float64, IDL.Vec(Feature)],
-      [Variant],
+  'updateTrim' : IDL.Func(
+      [IDL.Nat, IDL.Nat, IDL.Text, IDL.Float64, IDL.Float64, IDL.Vec(Feature)],
+      [Trim],
       [],
     ),
 });
@@ -61,56 +94,92 @@ export const idlService = IDL.Service({
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
-  const Product = IDL.Record({
+  const CarCategory = IDL.Variant({
+    'mpv' : IDL.Null,
+    'suv' : IDL.Null,
+    'coupe' : IDL.Null,
+    'sedan' : IDL.Null,
+    'hatchback' : IDL.Null,
+  });
+  const CarModel = IDL.Record({
     'id' : IDL.Nat,
+    'tagline' : IDL.Text,
     'name' : IDL.Text,
     'description' : IDL.Text,
     'imageUrl' : IDL.Text,
-    'category' : IDL.Text,
+    'category' : CarCategory,
   });
   const Feature = IDL.Record({
     'value' : IDL.Text,
     'name' : IDL.Text,
     'included' : IDL.Bool,
   });
-  const Variant = IDL.Record({
+  const Trim = IDL.Record({
     'id' : IDL.Nat,
     'features' : IDL.Vec(Feature),
     'name' : IDL.Text,
-    'productId' : IDL.Nat,
+    'carModelId' : IDL.Nat,
     'price' : IDL.Float64,
+    'monthlyEMI' : IDL.Float64,
   });
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
+  });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
   
   return IDL.Service({
-    'addProduct' : IDL.Func(
-        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
-        [Product],
+    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addCarModel' : IDL.Func(
+        [IDL.Text, IDL.Text, CarCategory, IDL.Text, IDL.Text],
+        [CarModel],
         [],
       ),
-    'addVariant' : IDL.Func(
-        [IDL.Nat, IDL.Text, IDL.Float64, IDL.Vec(Feature)],
-        [Variant],
+    'addTrim' : IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Float64, IDL.Float64, IDL.Vec(Feature)],
+        [Trim],
         [],
       ),
-    'deleteProduct' : IDL.Func([IDL.Nat], [], []),
-    'deleteVariant' : IDL.Func([IDL.Nat], [], []),
-    'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
-    'getProduct' : IDL.Func([IDL.Nat], [Product], ['query']),
-    'getVariant' : IDL.Func([IDL.Nat], [Variant], ['query']),
-    'getVariantsByProductId' : IDL.Func(
-        [IDL.Nat],
-        [IDL.Vec(Variant)],
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'claimAdminIfNoneExists' : IDL.Func([], [IDL.Bool], []),
+    'deleteCarModel' : IDL.Func([IDL.Nat], [], []),
+    'deleteTrim' : IDL.Func([IDL.Nat], [], []),
+    'getAllCarModels' : IDL.Func([], [IDL.Vec(CarModel)], ['query']),
+    'getCallerPrincipal' : IDL.Func([], [IDL.Text], ['query']),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getCarModel' : IDL.Func([IDL.Nat], [CarModel], ['query']),
+    'getNextCarModelId' : IDL.Func([], [IDL.Nat], ['query']),
+    'getNextTrimId' : IDL.Func([], [IDL.Nat], ['query']),
+    'getTrim' : IDL.Func([IDL.Nat], [Trim], ['query']),
+    'getTrimsByCarModelId' : IDL.Func([IDL.Nat], [IDL.Vec(Trim)], ['query']),
+    'getTrimsByIds' : IDL.Func([IDL.Vec(IDL.Nat)], [IDL.Vec(Trim)], ['query']),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'isSeeded' : IDL.Func([], [IDL.Bool], ['query']),
+    'resetAdmin' : IDL.Func([], [], []),
+    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'seedData' : IDL.Func([], [], []),
-    'updateProduct' : IDL.Func(
-        [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
-        [Product],
+    'updateCarModel' : IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Text, CarCategory, IDL.Text, IDL.Text],
+        [CarModel],
         [],
       ),
-    'updateVariant' : IDL.Func(
-        [IDL.Nat, IDL.Nat, IDL.Text, IDL.Float64, IDL.Vec(Feature)],
-        [Variant],
+    'updateTrim' : IDL.Func(
+        [
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Text,
+          IDL.Float64,
+          IDL.Float64,
+          IDL.Vec(Feature),
+        ],
+        [Trim],
         [],
       ),
   });

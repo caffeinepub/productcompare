@@ -2,189 +2,279 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Bricolage Grotesque – Display ── */
+/* ── Cabinet Grotesk – Display ── */
 @font-face {
-  font-family: "Bricolage Grotesque";
-  src: url("/assets/fonts/BricolageGrotesque-Variable.woff2") format("woff2");
+  font-family: "Cabinet Grotesk";
+  src: url("/assets/fonts/CabinetGrotesk-Variable.woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
-/* ── Outfit – Body ── */
+/* ── Satoshi – Body ── */
 @font-face {
-  font-family: "Outfit";
-  src: url("/assets/fonts/Outfit-Variable.woff2") format("woff2");
-  font-weight: 100 900;
+  font-family: "Satoshi";
+  src: url("/assets/fonts/Satoshi-Variable.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── JetBrains Mono – Data/Numbers ── */
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/assets/fonts/JetBrainsMono-Variable.woff2") format("woff2");
+  font-weight: 100 800;
   font-style: normal;
   font-display: swap;
 }
 
 @layer base {
   :root {
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Slate-dark backgrounds */
-    --background:     0.97 0.004 250;
-    --foreground:     0.18 0.03  265;
+    /* Dark automotive theme */
+    --background:     0.10 0.012 255;
+    --foreground:     0.93 0.006 250;
 
-    /* Card: pure white */
-    --card:           1 0 0;
-    --card-foreground: 0.18 0.03 265;
+    --card:           0.14 0.016 255;
+    --card-foreground: 0.93 0.006 250;
 
-    /* Popover */
-    --popover:        1 0 0;
-    --popover-foreground: 0.18 0.03 265;
+    --popover:        0.14 0.016 255;
+    --popover-foreground: 0.93 0.006 250;
 
-    /* Primary: electric teal */
-    --primary:        0.58 0.19 210;
-    --primary-foreground: 1 0 0;
+    /* Primary: platinum silver */
+    --primary:        0.85 0.008 250;
+    --primary-foreground: 0.10 0.012 255;
 
-    /* Secondary: slate */
-    --secondary:      0.93 0.008 250;
-    --secondary-foreground: 0.25 0.04 265;
+    /* Secondary: dark surface */
+    --secondary:      0.18 0.02 255;
+    --secondary-foreground: 0.82 0.008 250;
 
     /* Muted */
-    --muted:          0.94 0.006 250;
-    --muted-foreground: 0.52 0.02 265;
+    --muted:          0.17 0.018 255;
+    --muted-foreground: 0.52 0.014 255;
 
-    /* Accent: warm amber */
-    --accent:         0.78 0.17 70;
-    --accent-foreground: 0.18 0.03 265;
+    /* Accent: gold/amber premium */
+    --accent:         0.72 0.16 65;
+    --accent-foreground: 0.10 0.012 255;
 
     /* Destructive */
-    --destructive:    0.55 0.22 25;
-    --destructive-foreground: 1 0 0;
+    --destructive:    0.60 0.20 27;
+    --destructive-foreground: 0.95 0.006 250;
 
     /* Borders */
-    --border:         0.88 0.012 250;
-    --input:          0.88 0.012 250;
-    --ring:           0.58 0.19 210;
+    --border:         0.22 0.02 255;
+    --input:          0.22 0.02 255;
+    --ring:           0.72 0.16 65;
 
     /* Charts */
-    --chart-1:        0.58 0.19 210;
-    --chart-2:        0.78 0.17 70;
+    --chart-1:        0.72 0.16 65;
+    --chart-2:        0.60 0.18 210;
     --chart-3:        0.62 0.16 160;
     --chart-4:        0.65 0.18 290;
-    --chart-5:        0.55 0.22 25;
+    --chart-5:        0.60 0.20 27;
 
     /* Sidebar */
-    --sidebar:        0.97 0.004 250;
-    --sidebar-foreground: 0.18 0.03 265;
-    --sidebar-primary: 0.58 0.19 210;
-    --sidebar-primary-foreground: 1 0 0;
-    --sidebar-accent: 0.93 0.008 250;
-    --sidebar-accent-foreground: 0.25 0.04 265;
-    --sidebar-border: 0.88 0.012 250;
-    --sidebar-ring:   0.58 0.19 210;
+    --sidebar:        0.12 0.014 255;
+    --sidebar-foreground: 0.93 0.006 250;
+    --sidebar-primary: 0.72 0.16 65;
+    --sidebar-primary-foreground: 0.10 0.012 255;
+    --sidebar-accent: 0.18 0.02 255;
+    --sidebar-accent-foreground: 0.82 0.008 250;
+    --sidebar-border: 0.22 0.02 255;
+    --sidebar-ring:   0.72 0.16 65;
 
     /* App-specific tokens */
-    --surface:        0.96 0.006 250;
-    --surface-raised: 1 0 0;
-    --teal:           0.58 0.19 210;
-    --teal-light:     0.92 0.06 210;
-    --amber:          0.78 0.17 70;
-    --amber-light:    0.96 0.07 70;
-    --navy:           0.22 0.04 265;
+    --gold:           0.72 0.16 65;
+    --gold-bright:    0.80 0.18 65;
+    --gold-subtle:    0.18 0.05 65;
+    --gold-dim:       0.28 0.07 65;
+    --silver:         0.75 0.010 255;
+    --silver-dim:     0.45 0.010 255;
+    --surface-01:     0.12 0.014 255;
+    --surface-02:     0.16 0.018 255;
+    --surface-03:     0.20 0.022 255;
     --success:        0.62 0.16 160;
-    --success-light:  0.94 0.06 160;
-  }
-
-  .dark {
-    --background:     0.15 0.025 265;
-    --foreground:     0.95 0.008 250;
-    --card:           0.21 0.03 265;
-    --card-foreground: 0.95 0.008 250;
-    --popover:        0.21 0.03 265;
-    --popover-foreground: 0.95 0.008 250;
-    --primary:        0.65 0.19 210;
-    --primary-foreground: 0.1 0.02 265;
-    --secondary:      0.25 0.03 265;
-    --secondary-foreground: 0.9 0.008 250;
-    --muted:          0.26 0.03 265;
-    --muted-foreground: 0.6 0.02 265;
-    --accent:         0.78 0.17 70;
-    --accent-foreground: 0.1 0.02 265;
-    --destructive:    0.65 0.22 25;
-    --destructive-foreground: 0.95 0.008 250;
-    --border:         0.28 0.03 265;
-    --input:          0.28 0.03 265;
-    --ring:           0.65 0.19 210;
-    --sidebar:        0.18 0.03 265;
-    --sidebar-foreground: 0.95 0.008 250;
-    --sidebar-primary: 0.65 0.19 210;
-    --sidebar-primary-foreground: 0.1 0.02 265;
-    --sidebar-accent: 0.25 0.03 265;
-    --sidebar-accent-foreground: 0.9 0.008 250;
-    --sidebar-border: 0.28 0.03 265;
-    --sidebar-ring:   0.65 0.19 210;
-    --surface:        0.19 0.03 265;
-    --surface-raised: 0.22 0.03 265;
-    --teal:           0.65 0.19 210;
-    --teal-light:     0.25 0.08 210;
-    --amber:          0.78 0.17 70;
-    --amber-light:    0.28 0.08 70;
-    --success:        0.65 0.16 160;
-    --success-light:  0.22 0.07 160;
+    --success-dim:    0.18 0.06 160;
+    --danger:         0.60 0.20 27;
+    --danger-dim:     0.18 0.07 27;
   }
 
   * {
     @apply border-border;
   }
 
+  html {
+    color-scheme: dark;
+  }
+
   body {
     @apply bg-background text-foreground font-body;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, oklch(0.72 0.16 65 / 0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 100% 80%, oklch(0.60 0.18 210 / 0.04) 0%, transparent 60%);
+    background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
-  .font-display { font-family: "Bricolage Grotesque", sans-serif; }
-  .font-body    { font-family: "Outfit", sans-serif; }
+  .font-display { font-family: "Cabinet Grotesk", sans-serif; }
+  .font-body    { font-family: "Satoshi", sans-serif; }
+  .font-mono    { font-family: "JetBrains Mono", monospace; }
 
-  .bg-surface       { background-color: oklch(var(--surface)); }
-  .bg-surface-raised { background-color: oklch(var(--surface-raised)); }
-  .bg-teal          { background-color: oklch(var(--teal)); }
-  .bg-teal-light    { background-color: oklch(var(--teal-light)); }
-  .bg-amber-light   { background-color: oklch(var(--amber-light)); }
-  .bg-success-light { background-color: oklch(var(--success-light)); }
-  .text-teal        { color: oklch(var(--teal)); }
-  .text-amber       { color: oklch(var(--amber)); }
-  .text-navy        { color: oklch(var(--navy)); }
+  /* Gold system */
+  .text-gold        { color: oklch(var(--gold)); }
+  .text-gold-bright { color: oklch(var(--gold-bright)); }
+  .text-silver      { color: oklch(var(--silver)); }
+  .text-silver-dim  { color: oklch(var(--silver-dim)); }
+  .bg-gold          { background-color: oklch(var(--gold)); }
+  .bg-gold-subtle   { background-color: oklch(var(--gold-subtle)); }
+  .bg-gold-dim      { background-color: oklch(var(--gold-dim)); }
+  .bg-surface-01    { background-color: oklch(var(--surface-01)); }
+  .bg-surface-02    { background-color: oklch(var(--surface-02)); }
+  .bg-surface-03    { background-color: oklch(var(--surface-03)); }
+  .border-gold      { border-color: oklch(var(--gold) / 0.4); }
   .text-success     { color: oklch(var(--success)); }
-  .border-teal      { border-color: oklch(var(--teal)); }
-  .ring-teal        { --tw-ring-color: oklch(var(--teal)); }
+  .bg-success-dim   { background-color: oklch(var(--success-dim)); }
+  .text-danger      { color: oklch(var(--danger)); }
+  .bg-danger-dim    { background-color: oklch(var(--danger-dim)); }
 
-  .compare-column-highlight {
-    background: oklch(var(--teal) / 0.06);
-    border-left: 2px solid oklch(var(--teal) / 0.3);
-    border-right: 2px solid oklch(var(--teal) / 0.3);
+  /* Card with subtle gold glow on hover */
+  .card-auto {
+    background: oklch(var(--card));
+    border: 1px solid oklch(var(--border));
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
   }
-
-  .card-hover {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .card-hover:hover {
+  .card-auto:hover {
+    border-color: oklch(var(--gold) / 0.35);
+    box-shadow:
+      0 0 0 1px oklch(var(--gold) / 0.12),
+      0 8px 32px oklch(0 0 0 / 0.4),
+      0 2px 8px oklch(var(--gold) / 0.08);
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px oklch(var(--teal) / 0.12), 0 4px 12px oklch(0 0 0 / 0.08);
   }
 
-  .gradient-mesh {
-    background:
-      radial-gradient(ellipse 60% 40% at 80% 10%, oklch(var(--teal) / 0.07) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 30% at 10% 90%, oklch(var(--amber) / 0.05) 0%, transparent 60%),
-      oklch(var(--background));
+  /* Gradient divider line */
+  .divider-gold {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(var(--gold) / 0.5) 40%,
+      oklch(var(--gold) / 0.5) 60%,
+      transparent
+    );
   }
 
-  .feature-check {
-    color: oklch(var(--success));
+  /* Gold shimmer badge */
+  .badge-category {
+    background: oklch(var(--gold-subtle));
+    color: oklch(var(--gold-bright));
+    border: 1px solid oklch(var(--gold) / 0.3);
+    font-family: "Satoshi", sans-serif;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.25rem;
   }
-  .feature-x {
+
+  /* Price display */
+  .price-display {
+    font-family: "Cabinet Grotesk", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: oklch(var(--foreground));
+  }
+
+  /* EMI display */
+  .emi-display {
+    font-family: "JetBrains Mono", monospace;
+    color: oklch(var(--gold));
+    font-size: 0.85rem;
+  }
+
+  /* Feature check/cross icons */
+  .feature-included { color: oklch(var(--success)); }
+  .feature-excluded { color: oklch(var(--muted-foreground)); opacity: 0.4; }
+
+  /* Compare table */
+  .compare-col-highlight {
+    background: oklch(var(--gold) / 0.05);
+  }
+  .compare-col-highlight td,
+  .compare-col-highlight th {
+    border-left: 1px solid oklch(var(--gold) / 0.2);
+    border-right: 1px solid oklch(var(--gold) / 0.2);
+  }
+
+  /* Nav link active */
+  .nav-link {
+    position: relative;
     color: oklch(var(--muted-foreground));
+    font-weight: 500;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+    transition: color 0.2s ease;
+    padding: 0.375rem 0.75rem;
+  }
+  .nav-link:hover {
+    color: oklch(var(--foreground));
+  }
+  .nav-link.active {
+    color: oklch(var(--gold-bright));
+  }
+  .nav-link.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 2px;
+    background: oklch(var(--gold));
+    border-radius: 1px;
+  }
+
+  /* Trim selector pill */
+  .trim-pill {
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    border: 1px solid oklch(var(--border));
+    background: oklch(var(--surface-02));
+    color: oklch(var(--muted-foreground));
+    cursor: pointer;
+  }
+  .trim-pill:hover {
+    border-color: oklch(var(--gold) / 0.4);
+    color: oklch(var(--foreground));
+  }
+  .trim-pill.selected {
+    background: oklch(var(--gold-subtle));
+    border-color: oklch(var(--gold) / 0.5);
+    color: oklch(var(--gold-bright));
+  }
+
+  /* Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(var(--border)) transparent;
+  }
+  *::-webkit-scrollbar { width: 5px; height: 5px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: oklch(var(--border));
+    border-radius: 3px;
   }
 }

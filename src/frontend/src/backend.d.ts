@@ -7,35 +7,65 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface Variant {
+export interface CarModel {
+    id: bigint;
+    tagline: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+    category: CarCategory;
+}
+export interface Trim {
     id: bigint;
     features: Array<Feature>;
     name: string;
-    productId: bigint;
+    carModelId: bigint;
     price: number;
+    monthlyEMI: number;
 }
 export interface Feature {
     value: string;
     name: string;
     included: boolean;
 }
-export interface Product {
-    id: bigint;
+export interface UserProfile {
     name: string;
-    description: string;
-    imageUrl: string;
-    category: string;
+}
+export enum CarCategory {
+    mpv = "mpv",
+    suv = "suv",
+    coupe = "coupe",
+    sedan = "sedan",
+    hatchback = "hatchback"
+}
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
 }
 export interface backendInterface {
-    addProduct(name: string, description: string, category: string, imageUrl: string): Promise<Product>;
-    addVariant(productId: bigint, name: string, price: number, features: Array<Feature>): Promise<Variant>;
-    deleteProduct(id: bigint): Promise<void>;
-    deleteVariant(id: bigint): Promise<void>;
-    getAllProducts(): Promise<Array<Product>>;
-    getProduct(id: bigint): Promise<Product>;
-    getVariant(id: bigint): Promise<Variant>;
-    getVariantsByProductId(productId: bigint): Promise<Array<Variant>>;
+    addCarModel(name: string, description: string, category: CarCategory, tagline: string, imageUrl: string): Promise<CarModel>;
+    addTrim(carModelId: bigint, name: string, price: number, monthlyEMI: number, features: Array<Feature>): Promise<Trim>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    claimAdminIfNoneExists(): Promise<boolean>;
+    deleteCarModel(id: bigint): Promise<void>;
+    deleteTrim(id: bigint): Promise<void>;
+    getAllCarModels(): Promise<Array<CarModel>>;
+    getCallerPrincipal(): Promise<string>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
+    getCallerUserRole(): Promise<UserRole>;
+    getCarModel(id: bigint): Promise<CarModel>;
+    getNextCarModelId(): Promise<bigint>;
+    getNextTrimId(): Promise<bigint>;
+    getTrim(id: bigint): Promise<Trim>;
+    getTrimsByCarModelId(carModelId: bigint): Promise<Array<Trim>>;
+    getTrimsByIds(trimIds: Array<bigint>): Promise<Array<Trim>>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
+    isCallerAdmin(): Promise<boolean>;
+    isSeeded(): Promise<boolean>;
+    resetAdmin(): Promise<void>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
     seedData(): Promise<void>;
-    updateProduct(id: bigint, name: string, description: string, category: string, imageUrl: string): Promise<Product>;
-    updateVariant(id: bigint, productId: bigint, name: string, price: number, features: Array<Feature>): Promise<Variant>;
+    updateCarModel(id: bigint, name: string, description: string, category: CarCategory, tagline: string, imageUrl: string): Promise<CarModel>;
+    updateTrim(id: bigint, carModelId: bigint, name: string, price: number, monthlyEMI: number, features: Array<Feature>): Promise<Trim>;
 }

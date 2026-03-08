@@ -10,42 +10,73 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type CarCategory = { 'mpv' : null } |
+  { 'suv' : null } |
+  { 'coupe' : null } |
+  { 'sedan' : null } |
+  { 'hatchback' : null };
+export interface CarModel {
+  'id' : bigint,
+  'tagline' : string,
+  'name' : string,
+  'description' : string,
+  'imageUrl' : string,
+  'category' : CarCategory,
+}
 export interface Feature {
   'value' : string,
   'name' : string,
   'included' : boolean,
 }
-export interface Product {
-  'id' : bigint,
-  'name' : string,
-  'description' : string,
-  'imageUrl' : string,
-  'category' : string,
-}
-export interface Variant {
+export interface Trim {
   'id' : bigint,
   'features' : Array<Feature>,
   'name' : string,
-  'productId' : bigint,
+  'carModelId' : bigint,
   'price' : number,
+  'monthlyEMI' : number,
 }
+export interface UserProfile { 'name' : string }
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
 export interface _SERVICE {
-  'addProduct' : ActorMethod<[string, string, string, string], Product>,
-  'addVariant' : ActorMethod<[bigint, string, number, Array<Feature>], Variant>,
-  'deleteProduct' : ActorMethod<[bigint], undefined>,
-  'deleteVariant' : ActorMethod<[bigint], undefined>,
-  'getAllProducts' : ActorMethod<[], Array<Product>>,
-  'getProduct' : ActorMethod<[bigint], Product>,
-  'getVariant' : ActorMethod<[bigint], Variant>,
-  'getVariantsByProductId' : ActorMethod<[bigint], Array<Variant>>,
-  'seedData' : ActorMethod<[], undefined>,
-  'updateProduct' : ActorMethod<
-    [bigint, string, string, string, string],
-    Product
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addCarModel' : ActorMethod<
+    [string, string, CarCategory, string, string],
+    CarModel
   >,
-  'updateVariant' : ActorMethod<
-    [bigint, bigint, string, number, Array<Feature>],
-    Variant
+  'addTrim' : ActorMethod<
+    [bigint, string, number, number, Array<Feature>],
+    Trim
+  >,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'claimAdminIfNoneExists' : ActorMethod<[], boolean>,
+  'deleteCarModel' : ActorMethod<[bigint], undefined>,
+  'deleteTrim' : ActorMethod<[bigint], undefined>,
+  'getAllCarModels' : ActorMethod<[], Array<CarModel>>,
+  'getCallerPrincipal' : ActorMethod<[], string>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getCarModel' : ActorMethod<[bigint], CarModel>,
+  'getNextCarModelId' : ActorMethod<[], bigint>,
+  'getNextTrimId' : ActorMethod<[], bigint>,
+  'getTrim' : ActorMethod<[bigint], Trim>,
+  'getTrimsByCarModelId' : ActorMethod<[bigint], Array<Trim>>,
+  'getTrimsByIds' : ActorMethod<[Array<bigint>], Array<Trim>>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'isSeeded' : ActorMethod<[], boolean>,
+  'resetAdmin' : ActorMethod<[], undefined>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'seedData' : ActorMethod<[], undefined>,
+  'updateCarModel' : ActorMethod<
+    [bigint, string, string, CarCategory, string, string],
+    CarModel
+  >,
+  'updateTrim' : ActorMethod<
+    [bigint, bigint, string, number, number, Array<Feature>],
+    Trim
   >,
 }
 export declare const idlService: IDL.ServiceClass;

@@ -89,149 +89,377 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface Variant {
+export interface CarModel {
+    id: bigint;
+    tagline: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+    category: CarCategory;
+}
+export interface Trim {
     id: bigint;
     features: Array<Feature>;
     name: string;
-    productId: bigint;
+    carModelId: bigint;
     price: number;
+    monthlyEMI: number;
 }
 export interface Feature {
     value: string;
     name: string;
     included: boolean;
 }
-export interface Product {
-    id: bigint;
+export interface UserProfile {
     name: string;
-    description: string;
-    imageUrl: string;
-    category: string;
+}
+export enum CarCategory {
+    mpv = "mpv",
+    suv = "suv",
+    coupe = "coupe",
+    sedan = "sedan",
+    hatchback = "hatchback"
+}
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
 }
 export interface backendInterface {
-    addProduct(name: string, description: string, category: string, imageUrl: string): Promise<Product>;
-    addVariant(productId: bigint, name: string, price: number, features: Array<Feature>): Promise<Variant>;
-    deleteProduct(id: bigint): Promise<void>;
-    deleteVariant(id: bigint): Promise<void>;
-    getAllProducts(): Promise<Array<Product>>;
-    getProduct(id: bigint): Promise<Product>;
-    getVariant(id: bigint): Promise<Variant>;
-    getVariantsByProductId(productId: bigint): Promise<Array<Variant>>;
+    _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    addCarModel(name: string, description: string, category: CarCategory, tagline: string, imageUrl: string): Promise<CarModel>;
+    addTrim(carModelId: bigint, name: string, price: number, monthlyEMI: number, features: Array<Feature>): Promise<Trim>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    claimAdminIfNoneExists(): Promise<boolean>;
+    deleteCarModel(id: bigint): Promise<void>;
+    deleteTrim(id: bigint): Promise<void>;
+    getAllCarModels(): Promise<Array<CarModel>>;
+    getCallerPrincipal(): Promise<string>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
+    getCallerUserRole(): Promise<UserRole>;
+    getCarModel(id: bigint): Promise<CarModel>;
+    getNextCarModelId(): Promise<bigint>;
+    getNextTrimId(): Promise<bigint>;
+    getTrim(id: bigint): Promise<Trim>;
+    getTrimsByCarModelId(carModelId: bigint): Promise<Array<Trim>>;
+    getTrimsByIds(trimIds: Array<bigint>): Promise<Array<Trim>>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
+    isCallerAdmin(): Promise<boolean>;
+    isSeeded(): Promise<boolean>;
+    resetAdmin(): Promise<void>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
     seedData(): Promise<void>;
-    updateProduct(id: bigint, name: string, description: string, category: string, imageUrl: string): Promise<Product>;
-    updateVariant(id: bigint, productId: bigint, name: string, price: number, features: Array<Feature>): Promise<Variant>;
+    updateCarModel(id: bigint, name: string, description: string, category: CarCategory, tagline: string, imageUrl: string): Promise<CarModel>;
+    updateTrim(id: bigint, carModelId: bigint, name: string, price: number, monthlyEMI: number, features: Array<Feature>): Promise<Trim>;
 }
+import type { CarCategory as _CarCategory, CarModel as _CarModel, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async addProduct(arg0: string, arg1: string, arg2: string, arg3: string): Promise<Product> {
+    async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.addProduct(arg0, arg1, arg2, arg3);
+                const result = await this.actor._initializeAccessControlWithSecret(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addProduct(arg0, arg1, arg2, arg3);
+            const result = await this.actor._initializeAccessControlWithSecret(arg0);
             return result;
         }
     }
-    async addVariant(arg0: bigint, arg1: string, arg2: number, arg3: Array<Feature>): Promise<Variant> {
+    async addCarModel(arg0: string, arg1: string, arg2: CarCategory, arg3: string, arg4: string): Promise<CarModel> {
         if (this.processError) {
             try {
-                const result = await this.actor.addVariant(arg0, arg1, arg2, arg3);
+                const result = await this.actor.addCarModel(arg0, arg1, to_candid_CarCategory_n1(this._uploadFile, this._downloadFile, arg2), arg3, arg4);
+                return from_candid_CarModel_n3(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addCarModel(arg0, arg1, to_candid_CarCategory_n1(this._uploadFile, this._downloadFile, arg2), arg3, arg4);
+            return from_candid_CarModel_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async addTrim(arg0: bigint, arg1: string, arg2: number, arg3: number, arg4: Array<Feature>): Promise<Trim> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addTrim(arg0, arg1, arg2, arg3, arg4);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addVariant(arg0, arg1, arg2, arg3);
+            const result = await this.actor.addTrim(arg0, arg1, arg2, arg3, arg4);
             return result;
         }
     }
-    async deleteProduct(arg0: bigint): Promise<void> {
+    async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.deleteProduct(arg0);
+                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n7(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.deleteProduct(arg0);
+            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n7(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
-    async deleteVariant(arg0: bigint): Promise<void> {
+    async claimAdminIfNoneExists(): Promise<boolean> {
         if (this.processError) {
             try {
-                const result = await this.actor.deleteVariant(arg0);
+                const result = await this.actor.claimAdminIfNoneExists();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.deleteVariant(arg0);
+            const result = await this.actor.claimAdminIfNoneExists();
             return result;
         }
     }
-    async getAllProducts(): Promise<Array<Product>> {
+    async deleteCarModel(arg0: bigint): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAllProducts();
+                const result = await this.actor.deleteCarModel(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getAllProducts();
+            const result = await this.actor.deleteCarModel(arg0);
             return result;
         }
     }
-    async getProduct(arg0: bigint): Promise<Product> {
+    async deleteTrim(arg0: bigint): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.getProduct(arg0);
+                const result = await this.actor.deleteTrim(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getProduct(arg0);
+            const result = await this.actor.deleteTrim(arg0);
             return result;
         }
     }
-    async getVariant(arg0: bigint): Promise<Variant> {
+    async getAllCarModels(): Promise<Array<CarModel>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getVariant(arg0);
+                const result = await this.actor.getAllCarModels();
+                return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllCarModels();
+            return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCallerPrincipal(): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCallerPrincipal();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getVariant(arg0);
+            const result = await this.actor.getCallerPrincipal();
             return result;
         }
     }
-    async getVariantsByProductId(arg0: bigint): Promise<Array<Variant>> {
+    async getCallerUserProfile(): Promise<UserProfile | null> {
         if (this.processError) {
             try {
-                const result = await this.actor.getVariantsByProductId(arg0);
+                const result = await this.actor.getCallerUserProfile();
+                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCallerUserProfile();
+            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCallerUserRole(): Promise<UserRole> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCallerUserRole();
+                return from_candid_UserRole_n11(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCallerUserRole();
+            return from_candid_UserRole_n11(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCarModel(arg0: bigint): Promise<CarModel> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCarModel(arg0);
+                return from_candid_CarModel_n3(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCarModel(arg0);
+            return from_candid_CarModel_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getNextCarModelId(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getNextCarModelId();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getVariantsByProductId(arg0);
+            const result = await this.actor.getNextCarModelId();
+            return result;
+        }
+    }
+    async getNextTrimId(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getNextTrimId();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getNextTrimId();
+            return result;
+        }
+    }
+    async getTrim(arg0: bigint): Promise<Trim> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getTrim(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getTrim(arg0);
+            return result;
+        }
+    }
+    async getTrimsByCarModelId(arg0: bigint): Promise<Array<Trim>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getTrimsByCarModelId(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getTrimsByCarModelId(arg0);
+            return result;
+        }
+    }
+    async getTrimsByIds(arg0: Array<bigint>): Promise<Array<Trim>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getTrimsByIds(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getTrimsByIds(arg0);
+            return result;
+        }
+    }
+    async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserProfile(arg0);
+                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserProfile(arg0);
+            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async isCallerAdmin(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isCallerAdmin();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isCallerAdmin();
+            return result;
+        }
+    }
+    async isSeeded(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isSeeded();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isSeeded();
+            return result;
+        }
+    }
+    async resetAdmin(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.resetAdmin();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.resetAdmin();
+            return result;
+        }
+    }
+    async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveCallerUserProfile(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveCallerUserProfile(arg0);
             return result;
         }
     }
@@ -249,34 +477,139 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updateProduct(arg0: bigint, arg1: string, arg2: string, arg3: string, arg4: string): Promise<Product> {
+    async updateCarModel(arg0: bigint, arg1: string, arg2: string, arg3: CarCategory, arg4: string, arg5: string): Promise<CarModel> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateProduct(arg0, arg1, arg2, arg3, arg4);
+                const result = await this.actor.updateCarModel(arg0, arg1, arg2, to_candid_CarCategory_n1(this._uploadFile, this._downloadFile, arg3), arg4, arg5);
+                return from_candid_CarModel_n3(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateCarModel(arg0, arg1, arg2, to_candid_CarCategory_n1(this._uploadFile, this._downloadFile, arg3), arg4, arg5);
+            return from_candid_CarModel_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateTrim(arg0: bigint, arg1: bigint, arg2: string, arg3: number, arg4: number, arg5: Array<Feature>): Promise<Trim> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateTrim(arg0, arg1, arg2, arg3, arg4, arg5);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateProduct(arg0, arg1, arg2, arg3, arg4);
+            const result = await this.actor.updateTrim(arg0, arg1, arg2, arg3, arg4, arg5);
             return result;
         }
     }
-    async updateVariant(arg0: bigint, arg1: bigint, arg2: string, arg3: number, arg4: Array<Feature>): Promise<Variant> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.updateVariant(arg0, arg1, arg2, arg3, arg4);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.updateVariant(arg0, arg1, arg2, arg3, arg4);
-            return result;
-        }
-    }
+}
+function from_candid_CarCategory_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CarCategory): CarCategory {
+    return from_candid_variant_n6(_uploadFile, _downloadFile, value);
+}
+function from_candid_CarModel_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CarModel): CarModel {
+    return from_candid_record_n4(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n12(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_record_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: bigint;
+    tagline: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+    category: _CarCategory;
+}): {
+    id: bigint;
+    tagline: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+    category: CarCategory;
+} {
+    return {
+        id: value.id,
+        tagline: value.tagline,
+        name: value.name,
+        description: value.description,
+        imageUrl: value.imageUrl,
+        category: from_candid_CarCategory_n5(_uploadFile, _downloadFile, value.category)
+    };
+}
+function from_candid_variant_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    admin: null;
+} | {
+    user: null;
+} | {
+    guest: null;
+}): UserRole {
+    return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
+}
+function from_candid_variant_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    mpv: null;
+} | {
+    suv: null;
+} | {
+    coupe: null;
+} | {
+    sedan: null;
+} | {
+    hatchback: null;
+}): CarCategory {
+    return "mpv" in value ? CarCategory.mpv : "suv" in value ? CarCategory.suv : "coupe" in value ? CarCategory.coupe : "sedan" in value ? CarCategory.sedan : "hatchback" in value ? CarCategory.hatchback : value;
+}
+function from_candid_vec_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_CarModel>): Array<CarModel> {
+    return value.map((x)=>from_candid_CarModel_n3(_uploadFile, _downloadFile, x));
+}
+function to_candid_CarCategory_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CarCategory): _CarCategory {
+    return to_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_UserRole_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
+    return to_candid_variant_n8(_uploadFile, _downloadFile, value);
+}
+function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CarCategory): {
+    mpv: null;
+} | {
+    suv: null;
+} | {
+    coupe: null;
+} | {
+    sedan: null;
+} | {
+    hatchback: null;
+} {
+    return value == CarCategory.mpv ? {
+        mpv: null
+    } : value == CarCategory.suv ? {
+        suv: null
+    } : value == CarCategory.coupe ? {
+        coupe: null
+    } : value == CarCategory.sedan ? {
+        sedan: null
+    } : value == CarCategory.hatchback ? {
+        hatchback: null
+    } : value;
+}
+function to_candid_variant_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
+    admin: null;
+} | {
+    user: null;
+} | {
+    guest: null;
+} {
+    return value == UserRole.admin ? {
+        admin: null
+    } : value == UserRole.user ? {
+        user: null
+    } : value == UserRole.guest ? {
+        guest: null
+    } : value;
 }
 export interface CreateActorOptions {
     agent?: Agent;
